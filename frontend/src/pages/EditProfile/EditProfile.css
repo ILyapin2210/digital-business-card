@@ -1,0 +1,237 @@
+.edit-profile .terminal {
+  width: min(860px, 100%);
+}
+
+.edit-profile__form {
+  width: min(650px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.edit-profile__group,
+.edit-profile__skills {
+  width: 100%;
+}
+
+.edit-profile__group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid var(--border);
+}
+
+.edit-profile__group legend {
+  padding: 0 8px;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.edit-profile__group label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.edit-profile__form input,
+.edit-profile__form textarea,
+.edit-profile__form select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  outline: none;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+}
+
+.edit-profile__select {
+  position: relative;
+  min-width: 0;
+}
+
+.edit-profile__select::after {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid var(--muted);
+  border-bottom: 1px solid var(--muted);
+  content: '';
+  pointer-events: none;
+  transform: translateY(-65%) rotate(45deg);
+}
+
+.edit-profile__select:focus-within::after {
+  border-color: var(--accent);
+}
+
+.edit-profile__select--open::after {
+  transform: translateY(-25%) rotate(225deg);
+}
+
+.edit-profile__category-trigger {
+  width: 100%;
+  padding: 12px 42px 12px 14px;
+  border: 1px solid var(--border);
+  outline: none;
+  background: var(--bg);
+  color: var(--text);
+  text-align: left;
+  font: inherit;
+  font-size: 15px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.edit-profile__category-trigger:focus-visible {
+  border-color: var(--accent);
+}
+
+.edit-profile__category-menu {
+  position: absolute;
+  z-index: 2;
+  top: calc(100% + 4px);
+  right: 0;
+  left: 0;
+  display: grid;
+  padding: 4px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-raised);
+}
+
+.edit-profile__category-menu button {
+  padding: 9px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.edit-profile__category-menu button:hover,
+.edit-profile__category-menu button:focus-visible,
+.edit-profile__category-menu button[aria-selected='true'] {
+  outline: none;
+  background: var(--surface);
+  color: var(--accent);
+}
+
+.edit-profile__form textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+.edit-profile__form input:focus,
+.edit-profile__form textarea:focus {
+  border-color: var(--accent);
+}
+
+.edit-profile__skills {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.edit-profile__skills-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.edit-profile__skills-header button,
+.edit-profile__skill > button {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+}
+
+.edit-profile__skills-header button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.edit-profile__skill {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px 40px;
+  gap: 8px;
+  width: 100%;
+}
+
+.edit-profile__skill input {
+  min-width: 0;
+}
+
+.edit-profile__skill > button {
+  width: 40px;
+  color: var(--dim);
+  font-size: 20px;
+}
+
+.edit-profile__skill > button:hover {
+  color: var(--danger);
+}
+
+@media (max-width: 600px) {
+  .edit-profile__group {
+    padding: 16px;
+  }
+  .edit-profile__skill {
+    grid-template-columns: minmax(0, 1fr) 36px;
+  }
+  .edit-profile__skill .edit-profile__select {
+    grid-column: 1 / -1;
+  }
+}
+
+.edit-profile__error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 13px;
+}
+
+.edit-profile__success {
+  margin: -12px 0 0;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+@media (min-width: 601px) {
+  .edit-profile .terminal {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 48px);
+  }
+
+  .edit-profile .terminal__content {
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-color: var(--border-strong) var(--surface);
+    scrollbar-width: thin;
+  }
+
+  .edit-profile .terminal__content::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .edit-profile .terminal__content::-webkit-scrollbar-track {
+    background: var(--surface);
+  }
+
+  .edit-profile .terminal__content::-webkit-scrollbar-thumb {
+    border: 3px solid var(--surface);
+    background: var(--border-strong);
+  }
+}

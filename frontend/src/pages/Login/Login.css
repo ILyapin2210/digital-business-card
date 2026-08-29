@@ -1,0 +1,35 @@
+.login__terminal { width: min(760px, 100%); }
+
+.login__form {
+  width: min(520px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.login__form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.login__form input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  outline: none;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+}
+
+.login__form input:focus { border-color: var(--accent); }
+
+.login__error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 14px;
+}

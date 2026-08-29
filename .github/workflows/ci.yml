@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm prisma:generate
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm build
+      - run: pnpm --dir frontend lint
+      - run: pnpm --dir frontend build
+      - name: Start CockroachDB for e2e tests
+        run: |
+          docker run --detach --name cockroach \
+            --health-cmd="cockroach sql --insecure --host=localhost --execute='SELECT 1'" \
+            --health-interval=5s \
+            --health-timeout=5s \
+            --health-retries=20 \
+            -p 26257:26257 \
+            cockroachdb/cockroach:v25.2.5 start-single-node --insecure
+          for attempt in {1..30}; do
+            health="$(docker inspect --format='{{.State.Health.Status}}' cockroach)"
+            if [ "$health" = healthy ]; then
+              break
+            fi
+
+            if [ "$health" = unhealthy ]; then
+              docker logs cockroach
+              exit 1
+            fi
+
+            sleep 2
+          done
+          [ "$(docker inspect --format='{{.State.Health.Status}}' cockroach)" = healthy ]
+          docker exec cockroach cockroach sql --insecure --execute 'CREATE DATABASE digital_business_card_test'
+      - name: Run e2e tests
+        env:
+          DATABASE_URL: postgresql://root@localhost:26257/digital_business_card_test?sslmode=disable
+          TEST_DATABASE_URL: postgresql://root@localhost:26257/digital_business_card_test?sslmode=disable
+          JWT_SECRET: test-only-jwt-secret-that-is-at-least-32-characters
+        run: |
+          pnpm db:migrate
+          pnpm test:e2e

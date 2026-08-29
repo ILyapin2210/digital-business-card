@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "cockroachdb"
+}
+
+enum SkillCategory {
+  BACKEND
+  DATA
+  INTEGRATIONS
+  INFRASTRUCTURE
+  FRONTEND
+}
+
+model User {
+  id String @id() @default(uuid())
+  email String @unique
+  passwordHash String
+
+  profile Profile?
+}
+
+model Profile {
+  id String @id() @default(uuid())
+  name String
+  headline String @default("")
+  description String
+  location String @default("")
+  availability String @default("")
+  githubUrl String @default("")
+  telegramUrl String @default("")
+  contactEmail String @default("")
+  resumeUrl String @default("")
+  experience String @default("")
+  highlights String @default("")
+
+  userId String @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  skills Skill[]
+}
+
+model Skill {
+  id String @id() @default(uuid())
+  name String
+  category SkillCategory @default(BACKEND)
+
+  profileId String
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+   @@unique([profileId, name])
+}

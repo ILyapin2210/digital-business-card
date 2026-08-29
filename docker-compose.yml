@@ -1,0 +1,60 @@
+services:
+  database:
+    image: cockroachdb/cockroach:v25.2.5
+    command: start-single-node --insecure
+    ports:
+      - "26257:26257"
+    volumes:
+      - cockroach-data:/cockroach/cockroach-data
+    healthcheck:
+      test: ["CMD-SHELL", "cockroach sql --insecure --host=localhost --execute='SELECT 1'"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  migrate:
+    build:
+      context: .
+      target: build
+    command: pnpm exec prisma migrate deploy
+    environment:
+      DATABASE_URL: postgresql://root@database:26257/defaultdb?sslmode=disable
+      SEED_EMAIL: ${SEED_EMAIL:-}
+      SEED_PASSWORD: ${SEED_PASSWORD:-}
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: 'no'
+
+  api:
+    build:
+      context: .
+    environment:
+      DATABASE_URL: postgresql://root@database:26257/defaultdb?sslmode=disable
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env before starting Docker Compose}
+      NODE_ENV: production
+      PORT: 3000
+      CORS_ORIGIN: http://localhost:${WEB_PORT:-8080}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  cockroach-data:
