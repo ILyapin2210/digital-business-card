@@ -85,7 +85,7 @@ textarea {
 .terminal__command {
   margin: 0 0 18px;
   color: var(--muted);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   line-height: 1.4;
 }
@@ -169,7 +169,10 @@ textarea {
 @media (max-width: 600px) {
   .terminal-page {
     place-items: start center;
-    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    padding: max(12px, env(safe-area-inset-top))
+      max(12px, env(safe-area-inset-right))
+      max(12px, env(safe-area-inset-bottom))
+      max(12px, env(safe-area-inset-left));
   }
   .terminal__header {
     position: relative;
