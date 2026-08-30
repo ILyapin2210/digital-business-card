@@ -15,6 +15,14 @@ The browser requests the public profile through GraphQL. Editing is protected by
 
 In Docker, Nginx serves the React build and proxies `/graphql` and `/health` to the API. Prisma migrations run in a separate one-off container before the API starts.
 
+## Design decisions
+
+- **Single-owner scope.** This project is a personal business card rather than a multi-tenant card platform. `User` contains authentication data and owns a one-to-one `Profile`; the public content stays separate from credentials and can be updated without exposing the user model.
+- **No public slug yet.** The public `profile` query intentionally returns the single owner profile. Supporting several public cards would require an explicit unique slug (or another public identifier) and deterministic profile selection, which is outside the current scope.
+- **Stateless demo authentication.** Access tokens expire after 30 minutes and the SPA stores the bearer token in `localStorage`. This keeps the demo deployment small and stateless. A broader production system would normally use an HttpOnly cookie or a refresh/session flow, depending on its threat model.
+- **Explicit data lifecycle.** Migrations run before the API starts, while seeding remains a manual operation. Container restarts therefore apply schema changes without silently resetting profile edits or owner credentials.
+- **Same-origin delivery.** Nginx serves the frontend and proxies API traffic, so the deployed SPA can use `/graphql` without embedding an environment-specific backend URL in the bundle.
+
 ## Local development
 
 Prerequisites: Node.js 22+, pnpm 11+, Docker Desktop.
@@ -94,4 +102,4 @@ and provide a restricted `CORS_ORIGIN`.
 
 ## CI
 
-GitHub Actions runs formatting, linting, production builds, and GraphQL e2e tests against an isolated CockroachDB container on every push and pull request.
+GitHub Actions runs formatting, linting, application and Docker image builds, and GraphQL e2e tests against an isolated CockroachDB container on every push and pull request.
