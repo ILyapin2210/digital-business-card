@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
 
 import { logout } from '../../auth/logout';
+import { getToken } from '../../auth/token';
 import { GET_PROFILE, type GetProfileData } from '../../graphql/profile';
 import { ProfileTerminal } from './ProfileTerminal';
 import './Home.css';
@@ -29,7 +30,7 @@ export function Home() {
   return (
     <ProfileTerminal
       profile={data.profile}
-      isAuthenticated={Boolean(localStorage.getItem('accessToken'))}
+      isAuthenticated={Boolean(getToken())}
       onLogout={() => logout(navigate)}
     />
   );

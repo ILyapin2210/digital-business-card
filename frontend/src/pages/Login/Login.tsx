@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client/react';
 import { LOGIN, type LoginData, type LoginVariables } from '../../graphql/auth';
-import { setToken } from '../../auth/token';
+import { getToken, setToken } from '../../auth/token';
 import './Login.css';
 
 export function Login() {
@@ -16,9 +16,7 @@ export function Login() {
     LOGIN,
   );
 
-  const token = localStorage.getItem('accessToken');
-
-  if (token) {
+  if (getToken()) {
     return <Navigate to="/" replace />;
   }
 

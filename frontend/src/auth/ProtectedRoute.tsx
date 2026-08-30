@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
+import { getToken } from './token';
 
 type ProtectedRouteProps = {
   children: ReactNode;
@@ -7,9 +8,8 @@ type ProtectedRouteProps = {
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const location = useLocation();
-  const token = localStorage.getItem('accessToken');
 
-  if (!token) {
+  if (!getToken()) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
