@@ -21,6 +21,10 @@ jobs:
       - run: pnpm build
       - run: pnpm --dir frontend lint
       - run: pnpm --dir frontend build
+      - name: Build API Docker image
+        run: docker build --tag digital-business-card-api:ci .
+      - name: Build web Docker image
+        run: docker build --file frontend/Dockerfile --tag digital-business-card-web:ci .
       - name: Start CockroachDB for e2e tests
         run: |
           docker run --detach --name cockroach \

@@ -4,11 +4,20 @@ WORKDIR /app
 
 RUN corepack enable
 
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY frontend/package.json ./frontend/package.json
-RUN pnpm --dir frontend install --ignore-workspace --no-frozen-lockfile
+# Install only the frontend importer while using the repository lockfile.
+RUN pnpm --dir frontend install \
+    --ignore-workspace \
+    --ignore-scripts \
+    --frozen-lockfile \
+    --lockfile-dir /app \
+    --trust-lockfile
 
 COPY frontend ./frontend
-RUN pnpm --dir frontend build
+WORKDIR /app/frontend
+# Avoid re-entering the workspace during the isolated build.
+RUN ./node_modules/.bin/tsc -b && ./node_modules/.bin/vite build
 
 FROM nginx:1.27-alpine
 
